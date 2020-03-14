@@ -1,0 +1,28 @@
+version: '3'
+services:
+  visualizador:
+    image: dockersamples/visualizer
+    volumes:
+    - "/var/run/docker.sock:/var/run/docker.sock"
+    ports:
+    - 8080:8080
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
+  projects:
+    image: fernandalv/projects_microservice:latest
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    networks:
+      - net
+    ports:
+      - 8001:5000
+
+networks:
+  net:
+    external: true
